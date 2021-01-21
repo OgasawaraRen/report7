@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 void printScores(int[], int, char[]);
+void bucketSort(int *, int);
 
 int main()
 {
@@ -8,7 +9,9 @@ int main()
     int scores[SIZE] = {0, 60, 70, 100, 90};
     //処理コード
     printScores(scores, SIZE, "scores");
-    //printScores(scores, SIZE, "results");
+    bucketSort(scores, SIZE);
+    printScores(scores, SIZE, "results");
+
     return 0;
 }
 
@@ -22,4 +25,34 @@ void printScores(int scores[], int size, char name[])
         printf(" %d", scores[i]);
     }
     printf("\n");
+}
+
+void bucketSort(int *array, int size)
+{
+    int bucket[101];
+    int i;
+    for (i = 0; i <= 100; i++)
+    {
+        bucket[i] = 0;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        bucket[*(array + i)]++;
+    }
+    i = 0;
+    int bucketNum = 100;
+    while (i < size)
+    {
+        if (bucket[bucketNum] > 0)
+        {
+            *(array + i) = bucketNum;
+            i++;
+            bucket[bucketNum]--;
+        }
+        else
+        {
+            bucketNum--;
+        }
+    }
 }
