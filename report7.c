@@ -35,19 +35,18 @@ void printScores(int scores[], int size, char name[])
 
 void swap(int *array, int a, int b)
 {
-    int tmp = *(array + a);
-    *(array + a) = *(array + b);
-    *(array + b) = tmp;
+    int tmp = array[a];
+    array[a] = array[b];
+    array[b] = tmp;
 }
 
 int getPivot(int *array, int min, int max)
 {
     //配列から要素をランダムに3つ選び、その中央値を返す
     int vals[3];
-    vals[0] = *(array + ((rand() % (max - min + 1)) + min));
-    vals[1] = *(array + ((rand() % (max - min + 1)) + min));
-    vals[2] = *(array + ((rand() % (max - min + 1)) + min));
-
+    vals[0] = array[(rand() % (max - min + 1)) + min];
+    vals[1] = array[(rand() % (max - min + 1)) + min];
+    vals[2] = array[(rand() % (max - min + 1)) + min];
     int i;
     for (i = 1; i < 3; i++)
     {
@@ -67,11 +66,10 @@ int findPivotValOrHigher(int *array, int leftEnd, int right, int pivot)
 {
     //start:right  end:左端
     int index = right;
-
-    int *p;
-    for (p = array + right; p >= array; p--)
+    int i;
+    for (i = right; i >= 0; i--)
     {
-        if (pivot <= *p) //ピボット以上の値を見つけたらその位置を返す
+        if (pivot <= array[i]) //ピボット以上の値を見つけたらその位置を返す
         {
             return index;
         }
@@ -84,10 +82,10 @@ int findPivotValOrLower(int *array, int left, int rightEnd, int pivot)
 {
     //start:left  end:右端
     int index = left;
-    int *p;
-    for (p = array + left; p <= array + rightEnd; p++)
+    int i;
+    for (i = left; i <= rightEnd; i++)
     {
-        if (pivot >= *p) //ピボット以下の値を見つけたらその位置を返す
+        if (pivot >= array[i]) //ピボット以下の値を見つけたらその位置を返す
         {
             return index;
         }
