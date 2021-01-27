@@ -3,21 +3,44 @@
 #include <time.h>
 
 void printScores(int[], int, char[]);
+
 void quickSort(int *, int, int);
 int getPivot(int *, int, int);
 int findPivotValOrHigher(int *, int, int, int);
 int findPivotValOrLower(int *, int, int, int);
 void swap(int *, int, int);
 
+void bogoSort(int *, int);
+void shuffle(int *, int);
+int orderCheck(int *, int);
+
+void bucketSort(int *, int);
+
+void compare(int *, int);
+void copyArray(int *, int *, int);
+
 int main()
 {
-    const int SIZE = 6; //定数として配列のサイズを宣言
-    int scores[SIZE] = {100, 60, 70, 100, 90, 80};
+    const int SIZE_A = 6; //定数として配列のサイズを宣言
+    int scoresA[SIZE_A] = {100, 60, 70, 100, 90, 80};
     //処理コード
+    printf("CPU時間を計測...\n\n");
+
     srand((unsigned int)time(NULL));
-    printScores(scores, SIZE, "scores");
-    quickSort(scores, 0, SIZE - 1);
-    printScores(scores, SIZE, "results");
+    printScores(scoresA, SIZE_A, "scoresA");
+    compare(scoresA, SIZE_A);
+
+    printf("\n");
+    const int SIZE_B = 5;
+    int scoresB[SIZE_B] = {10, 10, 20, 20, 30};
+    printScores(scoresB, SIZE_B, "scoresB");
+    compare(scoresB, SIZE_B);
+
+    printf("\n");
+    const int SIZE_C = 5;
+    int scoresC[SIZE_C] = {5, 4, 3, 2, 1};
+    printScores(scoresC, SIZE_C, "scoresC");
+    compare(scoresC, SIZE_C);
     return 0;
 }
 
@@ -33,6 +56,67 @@ void printScores(int scores[], int size, char name[])
     printf("\n");
 }
 
+void copyArray(int *baseArray, int *copyArray, int size)
+{
+    int i;
+    for (i = 0; i < size; i++)
+    {
+        copyArray[i] = baseArray[i];
+    }
+}
+
+void compare(int *array, int size)
+{
+    //ソートにかかるCPU時間を計測
+
+    int scores[size];
+    int i;
+    copyArray(array, scores, size);
+
+    time_t start, end;
+    double aveTime, sumTime = 0;
+    int loopNum = 100;
+    for (i = 0; i < loopNum; i++)
+    {
+        start = clock();
+        quickSort(scores, 0, size - 1);
+        end = clock();
+        sumTime += (double)(end - start);
+        copyArray(array, scores, size);
+    }
+    aveTime = sumTime / loopNum;
+    sumTime = 0;
+
+    printf("・クイックソート:%.3lf\n", aveTime);
+
+    for (i = 0; i < loopNum; i++)
+    {
+        start = clock();
+        bogoSort(scores, size);
+        end = clock();
+        sumTime += (double)(end - start);
+        copyArray(array, scores, size);
+    }
+    aveTime = sumTime / loopNum;
+    sumTime = 0;
+
+    printf("・ボゴソート　　:%.3lf\n", aveTime);
+
+    for (i = 0; i < loopNum; i++)
+    {
+        start = clock();
+        bucketSort(scores, size);
+        end = clock();
+        sumTime += (double)(end - start);
+        copyArray(array, scores, size);
+    }
+    aveTime = sumTime / loopNum;
+    sumTime = 0;
+
+    printf("・バケットソート:%.3lf\n", aveTime);
+}
+
+//クイックソート
 void swap(int *array, int a, int b)
 {
     int tmp = array[a];
@@ -131,6 +215,72 @@ void quickSort(int *array, int left, int right)
                 quickSort(array, beforeSwapLeft, right);
             }
             return;
+        }
+    }
+}
+
+//ボゴソート
+void shuffle(int *array, int size)
+{
+    int i;
+    for (i = size - 1; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+        int tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+}
+
+int orderCheck(int *array, int size)
+{
+    int i;
+    for (i = 0; i < size - 1; i++)
+    {
+        if (!(array[i] >= array[i + 1]))
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void bogoSort(int *array, int size)
+{
+    while (!orderCheck(array, size))
+    {
+        shuffle(array, size);
+    }
+}
+
+//バケットソート
+void bucketSort(int *array, int size)
+{
+    int bucket[101];
+    int i;
+    for (i = 0; i <= 100; i++)
+    {
+        bucket[i] = 0;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        bucket[array[i]]++;
+    }
+    i = 0;
+    int bucketNum = 100;
+    while (i < size)
+    {
+        if (bucket[bucketNum] > 0)
+        {
+            array[i] = bucketNum;
+            i++;
+            bucket[bucketNum]--;
+        }
+        else
+        {
+            bucketNum--;
         }
     }
 }
