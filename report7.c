@@ -38,7 +38,7 @@ void bucketSort(int *array, int size)
 
     for (i = 0; i < size; i++)
     {
-        bucket[*(array + i)]++;
+        bucket[array[i]]++;
     }
     i = 0;
     int bucketNum = 100;
@@ -46,7 +46,7 @@ void bucketSort(int *array, int size)
     {
         if (bucket[bucketNum] > 0)
         {
-            *(array + i) = bucketNum;
+            array[i] = bucketNum;
             i++;
             bucket[bucketNum]--;
         }
